@@ -1,0 +1,6 @@
+optimiser:
+  name: AdamQLROptimiser
+  damping_decrease_factor: null
+  damping_increase_factor: null
+  update_amplification: 0.5
+  curvature_matrix: fisher

@@ -1,0 +1,5 @@
+optimiser:
+  name: SGDQLROptimiser
+  damping_decrease_factor: null
+  damping_increase_factor: null
+  curvature_matrix: hessian

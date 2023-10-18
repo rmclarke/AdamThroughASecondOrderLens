@@ -1,0 +1,5 @@
+optimiser:
+  name: sgd
+  learning_rate: 0.1
+  momentum: 0.9
+  add_decayed_weights: 5e-4

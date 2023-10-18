@@ -1,0 +1,8 @@
+optimiser:
+  name: AdamQLROptimiser
+  damping_decrease_factor: null
+  damping_increase_factor: null
+  curvature_matrix: fisher
+  scaling_envelope_peak: 1000
+  weight_decay: 0.0000687043
+  lr_clipping: 0.03

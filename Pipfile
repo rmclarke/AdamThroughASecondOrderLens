@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"jax[cuda]" = "*"
+kfac-jax = "*"
+optax = "*"
+configargparse = "*"
+"ruamel.yaml" = "*"
+scipy = "*"
+dm-haiku = "*"
+dm-pix = "*"
+ray = "*"
+tensorboardX = "*"
+chex = "*"
+matplotlib="*"
+pandas = "*"
+tbparse = "*"
+
+[requires]
+python_version = "3.10"

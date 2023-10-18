@@ -1,0 +1,18 @@
+model:
+  name: ResNet18
+  num_classes: 10
+loss:
+  name: cross_entropy_loss
+  num_classes: 10
+dataset:
+  name: SVHN
+  normalise_inputs: True
+  normalise_outputs: False
+  validation_proportion: 0.1666666667
+
+num_epochs: 10
+batch_size: 256
+forward_pass_extra_kwargs: [is_training]
+
+runs_per_gpu: 1
+max_training_time: 900  # 15 minutes

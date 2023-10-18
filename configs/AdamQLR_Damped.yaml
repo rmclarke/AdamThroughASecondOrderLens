@@ -1,0 +1,10 @@
+optimiser:
+  name: AdamQLROptimiser
+  initial_damping: 1.0
+  damping_algorithm: kfac
+  damping_decrease_factor: 0.95
+  damping_increase_factor: 1.0526  # ~= 1/0.95
+  damping_clipping: [1e-8, null]
+  curvature_matrix: fisher
+  lr_clipping: 0.03
+  # weight_decay: 0.0000687043

@@ -1,0 +1,18 @@
+model:
+  name: MLP
+  output_sizes: [50, 1]
+  activation: relu
+  with_bias: True
+loss:
+  name: mse_loss
+dataset:
+  name: UCI_Energy
+  normalise_inputs: True
+  normalise_outputs: True
+  validation_proportion: 0.15
+
+num_epochs: 4000
+batch_size: 588
+
+runs_per_gpu: 6
+max_training_time: 900  # 15 minutes

@@ -1,0 +1,33 @@
+model:
+  name: StackedLSTM
+  num_layers: 3
+  hidden_units_per_layer: 1150
+  embedding_dropout: 0.0  #0.1
+  input_dropout: 0.0  #0.4
+  inter_layer_dropout: 0.0  #0.25
+  output_dropout: 0.0  #0.4
+  num_embedding_dimensions: 400
+  num_tokens: 10000
+loss:
+  name: cross_entropy_loss
+  num_classes: 10000
+dataset:
+  name: PennTreebank
+  validation_proportion: 0.07351380227617708  # 73760 / (929589 + 73760)
+  subsequence_length: 70
+# optimiser:
+#   clip_by_global_norm: 0.25
+#   # add_decayed_weights: 1.2e-6
+
+batch_size: 20
+num_epochs: 500
+forward_pass_extra_kwargs: [is_training]
+recurrent_model_state: True
+
+runs_per_gpu: 1
+max_training_time: 3600  # 1 hour
+
+
+# Alpha/Beta regularisation
+# Learning rate rescaling with sequence length
+# Tying-together of embedding and decoder weights

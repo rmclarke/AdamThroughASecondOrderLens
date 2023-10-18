@@ -1,0 +1,18 @@
+model:
+  name: ResNet50
+  num_classes: 1000
+loss:
+  name: cross_entropy_loss
+  num_classes: 1000
+dataset:
+  name: ImageNet
+  normalise_inputs: True
+  normalise_outputs: False
+  validation_proportion: 0.037561027  # 50000/1331167
+
+num_epochs: 72
+batch_size: 1024
+forward_pass_extra_kwargs: [is_training]
+
+runs_per_gpu: 1
+max_training_time: null

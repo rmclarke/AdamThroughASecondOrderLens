@@ -1,0 +1,4 @@
+num_samples: 200
+tuning_metric: training_loss
+scratch_dir: /scratch/dir/ImprovingKFAC/ray/ASHA_Time_Training
+num_epochs: -1

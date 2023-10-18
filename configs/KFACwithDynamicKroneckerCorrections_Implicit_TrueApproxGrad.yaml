@@ -1,0 +1,15 @@
+optimiser:
+  name: KFACwithDynamicKroneckerCorrections
+  curvature_ema: 0.95
+  initial_damping: 1.0
+  l2_reg: 0
+  use_adaptive_learning_rate: True
+  use_adaptive_momentum: True
+  use_adaptive_damping: True
+  damping_adaptation_interval: 1
+  inverse_update_period: 1
+  correction_optimiser:
+    name: adam
+    learning_rate: 0.001
+  curvature_metric: true_approx_grad
+  correction_type: implicit

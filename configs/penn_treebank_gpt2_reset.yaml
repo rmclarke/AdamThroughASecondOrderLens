@@ -1,0 +1,17 @@
+model:
+  name: FlaxGPT2
+  pretrained: False
+loss:
+  name: cross_entropy_loss
+  num_classes: 10000
+dataset:
+  name: PennTreebank
+  validation_proportion: 0.07351380227617708  # 73760 / (929589 + 73760)
+  subsequence_length: 70
+
+batch_size: 30
+num_epochs: 100
+recurrent_model_state: True
+
+runs_per_gpu: 1
+max_training_time: 3600  # 1 hour

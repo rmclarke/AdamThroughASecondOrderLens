@@ -1,0 +1,9 @@
+batch_size: 3200
+optimiser:
+  name: AdamQLROptimiser
+  initial_damping: 1e-4
+  damping_algorithm: decreasing_loss
+  damping_decrease_factor: 0.75
+  damping_increase_factor: 2.0
+  curvature_matrix: hessian
+  saddle_free_lr_curvature: True

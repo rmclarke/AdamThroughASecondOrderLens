@@ -1,0 +1,25 @@
+model:
+  name: ResNet18
+  num_classes: 10
+loss:
+  name: cross_entropy_loss
+  num_classes: 10
+dataset:
+  name: CIFAR10
+  normalise_inputs: True
+  normalise_outputs: False
+  validation_proportion: 0.1  # 5000/50000
+optimiser:
+  name: sgd
+  learning_rate:
+    name: piecewise_constant_schedule
+    init_value: 0.1
+    boundaries_and_scales:
+      31300: 0.1  # 100 epochs * 128 batch_size
+      46950: 0.1  # 150 epochs * 128 batch_size
+  momentum: 0.9
+  add_decayed_weights: 5e-4
+
+num_epochs: 200
+batch_size: 128
+forward_pass_extra_kwargs: [is_training]

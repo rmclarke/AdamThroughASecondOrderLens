@@ -1,0 +1,7 @@
+optimiser:
+  name: AdamQLROptimiser
+  damping_decrease_factor: null
+  damping_increase_factor: null
+  curvature_matrix: fisher
+  update_norm_clipping: 1.0
+  gradient_norm_clipping: 1.0

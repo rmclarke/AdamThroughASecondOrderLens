@@ -1,0 +1,4 @@
+num_samples: 200
+tuning_metric: validation_loss
+scratch_dir: /scratch/dir/ImprovingKFAC/ray/ASHA_Time_Validation/
+num_epochs: -1

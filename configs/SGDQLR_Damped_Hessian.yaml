@@ -1,0 +1,8 @@
+optimiser:
+  name: SGDQLROptimiser
+  initial_damping: 1.0
+  damping_algorithm: decreasing_loss
+  damping_decrease_factor: 0.9
+  damping_increase_factor: 2.0
+  damping_clipping: [1e-8, null]
+  curvature_matrix: hessian
