@@ -15,5 +15,5 @@ batch_size: 128
 forward_pass_extra_kwargs: [is_training]
 
 runs_per_gpu: 1
-# max_training_time: 900  # 15 minutes
-max_training_time: 3600  # 1 hour
+max_training_time: 900  # 15 minutes
+# max_training_time: 3600  # 1 hour

@@ -1,5 +1,5 @@
-This repository contains code for the paper _Adam through a Second-Order Lens_ ,
-submitted to ICLR 2024.
+This repository contains code for the paper _Studying K-FAC Heuristics by Viewing Adam through a Second-Order Lens_,
+published at ICML 2024.
 
 
 # Installation
@@ -22,26 +22,26 @@ to be downloaded by calling the constructors with `download=True`.
 
 # Running
 Each dataset and algorithm is specified by a YAML configuration file in
-`configs/`, where `AdamQLR_Damped.yaml` is the _AdamQLR (Tuned)_
-algorithm described in our paper, and `AdamQLR_NoHPO.yaml` is the _AdamQLR
+`configs/`, where `AdamQLR_Damped_NoLRClipping.yaml` is the _AdamQLR (Tuned)_
+algorithm described in our paper, and `AdamQLR_NoHPO_NoLRClipping.yaml` is the _AdamQLR
 (Untuned)_ setting. To perform a single training run, simply pass
 the corresponding files to `train.py` with the `-c` flag, e.g.:
 ``` shell
-$ python train.py -c ./configs/fashion_mnist.yaml ./configs/AdamQLR_Damped.yaml
+$ python train.py -c ./configs/fashion_mnist.yaml ./configs/AdamQLR_Damped_NoLRClipping.yaml
 ```
 
 A complete hyperparameter optimisation routine, including 50 repetitions of the
 best hyperparameters found, can be performed by calling
 `hyperparameter_optimisation.py` with the corresponding configuration files:
 ``` shell
-$ python hyperparameter_optimisation.py -c ./configs/fashion_mnist.yaml ./configs/AdamQLR_Damped.yaml ./configs/ASHA.yaml
+$ python hyperparameter_optimisation.py -c ./configs/fashion_mnist.yaml ./configs/AdamQLR_Damped_NoLRClipping.yaml ./configs/ASHA.yaml
 ```
 This same file also contains helper functions for running sensitivity studies.
 Hyperparameter optimisation runs based on overall runtime rather than number of
 epochs may be performed by substituting `./configs/ASHA_time_training.yaml` or
 `./configs/ASHA_time_validation.yaml` in place of `./configs/ASHA.yaml`.
 
-To replicate all our experimental results, the various `run_*.sh*` scripts may
+To replicate all our experimental results, the various `run_*.sh` scripts may
 be useful.
 
 # Analysis

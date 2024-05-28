@@ -324,8 +324,13 @@ def log_losses(state,
                               state.statistics[key].item(),
                               state.global_step)
 
+    rosenbrock_tag = None
     if 'rosenbrock_model' in state.model_params:
-        position = state.model_params['rosenbrock_model']['position']
+        rosenbrock_tag = 'rosenbrock_model'
+    if 'rosenbrock_as_least_squares' in state.model_params:
+        rosenbrock_tag = 'rosenbrock_as_least_squares'
+    if rosenbrock_tag:
+        position = state.model_params[rosenbrock_tag]['position']
         logger.add_scalar('Position/x',
                           position[0],
                           state.global_step)
@@ -467,7 +472,7 @@ def main(config_dict=None, config_overrides={}):
             **config_dict['dataset']),
         num_epochs=config_dict['num_epochs'],
         batch_size=config_dict['batch_size'],
-        recurrent_state=config_dict['recurrent_model_state'],
+        recurrent_state=config_dict.get('recurrent_model_state', None),
     )
 
     if config_dict['num_epochs'] == -1:

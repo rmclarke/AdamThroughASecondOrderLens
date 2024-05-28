@@ -2,10 +2,14 @@
 
 optimisers=(
     'SGD'
-    'SGDmwd'
+    'AdamQLR_Damped_NoLRClipping'
     'Adam'
     'KFAC'
+    'SGDmwd'
     'AdamQLR_Damped'
+    'KFAC_Unadaptive'
+    'Adam_TunedEpsilon'
+    'BaydinSGD'
 )
 
 datasets=(
@@ -13,8 +17,8 @@ datasets=(
     'uci_protein'
     'fashion_mnist'
     'svhn'
-    'cifar-10'
-    # 'penn_treebank_gpt2_reset'
+    'cifar-10_15mins'
+    'penn_treebank_gpt2_reset'
 )
 
 for dataset in ${datasets[@]}

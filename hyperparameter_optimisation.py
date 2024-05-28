@@ -58,7 +58,7 @@ def repeat_best_config(directory, num_repetitions=50):
     best_config['master_config']['log_root'] = directory
     best_config['master_config']['run_group_name'] = 'Best_x50'
 
-    if best_config['master_config']['model']['name'] == 'RosenbrockModel':
+    if best_config['master_config']['model']['name'] in ('RosenbrockModel', 'RosenbrockAsLeastSquares'):
         best_config['master_config']['model']['initial_position'] = [1, -1]
         num_repetitions = 1
 
@@ -166,10 +166,21 @@ def run_stepping_factor_ablation(directory):
                  values=np.logspace(0, 2, num=11, base=2))
 
 
+def run_lr_ablation(directory):
+    run_ablation(directory,
+                 config_key='optimiser.learning_rate',
+                 experiment_name='LearningRate',
+                 values=np.logspace(-6, 0, num=19, base=10))
+
+
 def run_all_ablations(directory):
     run_amplification_ablation(directory)
     run_batch_size_ablation(directory)
     run_initial_damping_ablation(directory)
+    run_lr_clipping_ablation(directory)
+    run_stepping_factor_ablation(directory)
+
+    run_lr_ablation(directory)
 
 
 def parse_all_subdirectories(root_directory):
@@ -190,7 +201,8 @@ def parse_all_subdirectories(root_directory):
 def construct_search_space(master_config):
     search_space = {'master_config': master_config}
     if master_config['model']['name'] not in ('KroneckerFactoredQuadraticModel',
-                                              'RosenbrockModel'):
+                                              'RosenbrockModel',
+                                              'RosenbrockAsLeastSquares'):
         search_space.update({
             'batch_size': tune.choice((50, 100, 200, 400, 800, 1600, 3200))})
 
@@ -207,6 +219,9 @@ def construct_search_space(master_config):
         case 'adam':
             search_space.update({
                 'optimiser.learning_rate': tune.loguniform(1e-6, 1e-0)})
+            if master_config['optimiser'].get('eps', None) is not None:
+                search_space.update({
+                    'optimiser.eps': tune.loguniform(1e-8, 1)})
         case 'SGDQLROptimiser' | 'AdamQLROptimiser':
             if master_config['optimiser'].get('damping_increase_factor', None) is not None:
                 search_space.update({
@@ -231,6 +246,12 @@ def construct_search_space(master_config):
         case 'kfac_jax':
             search_space.update({
                 'optimiser.initial_damping': tune.loguniform(1e-8, 1)})
+            if not master_config['optimiser'].get('use_adaptive_learning_rate'):
+                search_space.update({
+                    'optimiser.learning_rate': tune.loguniform(1e-6, 1e-0)})
+            if not master_config['optimiser'].get('use_adaptive_momentum'):
+                search_space.update({
+                    '1-optimiser.momentum': tune.loguniform(1e-4, 0.3)})
         case ('KFACwithDynamicKroneckerCorrections'):
             if master_config.get('best_kfac_directory', None):
                 kfac_config = tune.Tuner.restore(
@@ -250,6 +271,10 @@ def construct_search_space(master_config):
             if 'weight_decay' in master_config['optimiser']['correction_optimiser']:
                 search_space.update({
                     'optimiser.correction_optimiser.weight_decay': tune.loguniform(1e-9, 1e6)})
+        case 'BaydinSGD':
+            search_space.update({
+                'optimiser.initial_learning_rate': tune.loguniform(1e-6, 1e-0),
+                'optimiser.hypergradient_learning_rate': tune.loguniform(1e-6, 1e-0)})
 
     if master_config['dataset']['name'] in ('PennTreebank', 'PennTreebankForGPT2'):
         search_space.update({
@@ -299,7 +324,10 @@ def run_hpo_algorithm():
         param_space=construct_search_space(master_config))
     tuner.fit()
     ray.shutdown()
-    repeat_best_config(os.path.join(scratch_dir, tuner_name))
+    repeat_kwargs = {}
+    if master_config['dataset']['name'] in ('PennTreebank', 'PennTreebankForGPT2'):
+        repeat_kwargs['num_repetitions'] = 10
+    repeat_best_config(os.path.join(scratch_dir, tuner_name), **repeat_kwargs)
     # util.pandas_from_tensorboard(os.path.join(scratch_dir, tuner_name))
 
 

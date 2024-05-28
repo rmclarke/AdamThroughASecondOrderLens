@@ -5,7 +5,7 @@ optimisers=(
     'SGDmwd'
     'Adam'
     'KFAC'
-    'AdamQLR_Damped'
+    'AdamQLR_Damped_NoLRClipping'
 )
 
 datasets=(
@@ -14,7 +14,7 @@ datasets=(
     'fashion_mnist'
     'svhn'
     'cifar-10_long'
-    # 'penn_treebank_gpt2_reset'
+    'penn_treebank_gpt2_reset'
 )
 
 for dataset in ${datasets[@]}

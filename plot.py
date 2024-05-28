@@ -58,13 +58,22 @@ KEY_TO_LABEL = dict(
     GD='GD Minimal',
     GDmwd='GD Full',
     SGD='SGD Minimal',
+    SGD_NoHPO='',
     SGDmwd='SGD Full',
+    SGDmwd_NoHPO='',
     Adam='Adam',
+    Adam_NoHPO='Adam (Untuned)',
+    Adam_TunedEpsilon=r'Adam (Tuned $\epsilon$)',
     KFAC='K-FAC',
+    KFAC_NoHPO='K-FAC (Untuned)',
+    KFAC_BigBatch_NoHPO='K-FAC (Untuned)',
+    KFAC_Unadaptive='K-FAC (Unadaptive)',
     SGDQLR_Undamped_Hessian='',
     SGDQLR_Damped_Hessian='',
     AdamQLR_Undamped_Hessian='AdamQLR Undamped (Hessian Curvature)',
     AdamQLR_Damped_Hessian='AdamQLR (Tuned, Hessian)',
+    AdamQLR_Damped_Hessian_NoLRClipping='AdamQLR (Hessian)',
+    AdamQLR_Damped_Hessian_NoLRClipping_NoHPO='AdamQLR (Untuned, Hessian)',
     AdamQLR_Damped_Hessian_DecreasingLossDamping='AdamQLR',
     AdamQLR_Damped_Hessian_NoHPO_SFN='AdamQLR (Untuned)',
     AdamQLR_Damped_AdamDampedCurvature='AdamQLR',
@@ -74,8 +83,11 @@ KEY_TO_LABEL = dict(
     SGDQLR_Undamped='',
     SGDQLR_Damped='',
     AdamQLR_Undamped='AdamQLR (Undamped)',
+    AdamQLR_Undamped_NoLRClipping='AdamQLR (Undamped)',
     AdamQLR_Undamped_Clipped='AdamQLR Undamped (Fisher Curvature, Clipped)',
     AdamQLR_Damped='AdamQLR (Tuned)',
+    AdamQLR_Damped_NoLRClipping='AdamQLR',
+    AdamQLR_NoHPO_NoLRClipping='AdamQLR (Untuned)',
     AdamQLR_Damped_Clipped='AdamQLR Damped (Fisher Curvature, Clipped)',
     AdamQLR_Damped_Enveloped='AdamQLR Damped (Fisher Curvature, Enveloped)',
 
@@ -83,6 +95,9 @@ KEY_TO_LABEL = dict(
     SGDQLR_Damped_Fisher='',
     AdamQLR_Undamped_Fisher='AdamQLR Undamped (Fisher Curvature)',
     AdamQLR_Damped_Fisher='AdamQLR (Tuned, Fisher)',
+    AdamQLR_Damped_Fisher_NoLRClipping='AdamQLR (Fisher)',
+
+    BaydinSGD='Baydin SGD',
 )
 
 KEY_TO_STYLE = dict(
@@ -91,11 +106,16 @@ KEY_TO_STYLE = dict(
     SGD=dict(color=SOLARIZED['violet']),
     SGDmwd=dict(color=SOLARIZED['blue']),
     Adam=dict(color=SOLARIZED['green']),
+    Adam_NoHPO=dict(color=SOLARIZED['green'], linestyle='dotted'),
     KFAC=dict(color=SOLARIZED['orange']),
+    KFAC_NoHPO=dict(color=SOLARIZED['orange'], linestyle='dotted'),
+    KFAC_BigBatch_NoHPO=dict(color=SOLARIZED['orange'], linestyle='dotted'),
     # SGDQLR_Undamped_Hessian=dict(color=SOLARIZED['orange'], linestyle='dashed'),
     # SGDQLR_Damped_Hessian=dict(color=SOLARIZED['orange']),
     AdamQLR_Undamped_Hessian=dict(color=SOLARIZED['yellow']),
     AdamQLR_Damped_Hessian=dict(color=SOLARIZED['red']),
+    AdamQLR_Damped_Hessian_NoLRClipping=dict(color=SOLARIZED['red'], alpha=0.5),
+    AdamQLR_Damped_Hessian_NoLRClipping_NoHPO=dict(color=SOLARIZED['orange'], linestyle='dotted', alpha=0.5),
     AdamQLR_Damped_Hessian_DecreasingLossDamping=dict(color=SOLARIZED['magenta']),
     AdamQLR_Damped_Hessian_NoHPO_SFN=dict(color=SOLARIZED['base03']),
     AdamQLR_Damped_AdamDampedCurvature=dict(color=SOLARIZED['magenta']),
@@ -105,8 +125,11 @@ KEY_TO_STYLE = dict(
     # SGDQLR_Undamped=dict(color=SOLARIZED['orange'], linestyle='dotted'),
     # SGDQLR_Damped=dict(color=SOLARIZED['orange'], linestyle='dashdot'),
     AdamQLR_Undamped=dict(color=SOLARIZED['yellow']),
+    AdamQLR_Undamped_NoLRClipping=dict(color=SOLARIZED['yellow']),
     AdamQLR_Undamped_Clipped=dict(color=SOLARIZED['orange'], linestyle='dashed'),
     AdamQLR_Damped=dict(color=SOLARIZED['magenta']),
+    AdamQLR_Damped_NoLRClipping=dict(color=SOLARIZED['magenta']),
+    AdamQLR_NoHPO_NoLRClipping=dict(color=SOLARIZED['magenta'], linestyle='dotted'),
     AdamQLR_Damped_Clipped=dict(color=SOLARIZED['magenta']),
     AdamQLR_Damped_Enveloped=dict(color=SOLARIZED['magenta']),
 
@@ -114,6 +137,11 @@ KEY_TO_STYLE = dict(
     # SGDQLR_Damped_Fisher=dict(color=SOLARIZED['orange'], linestyle='dashdot'),
     AdamQLR_Undamped_Fisher=dict(color=SOLARIZED['magenta'], linestyle='dotted'),
     AdamQLR_Damped_Fisher=dict(color=SOLARIZED['magenta']),
+    AdamQLR_Damped_Fisher_NoLRClipping=dict(color=SOLARIZED['magenta']),
+
+    Adam_TunedEpsilon=dict(color=SOLARIZED['green'], linestyle='dashdot'),
+    KFAC_Unadaptive=dict(color=SOLARIZED['orange'], linestyle='dashdot'),
+    BaydinSGD=dict(color=SOLARIZED['base03']),
 )
 
 
@@ -211,14 +239,19 @@ def bootstrap_aggregate(data, aggregation, num_bootstrapped_datasets):
     def _aggregation(x, **kwargs):
         return getattr(x, aggregation)(**kwargs)
 
+    sampled_index_sets = [
+        pd.Index(
+            np.random.choice(data.columns, len(data.columns), replace=True))
+        for _ in range(num_bootstrapped_datasets)]
+
     aggregated_samples = pd.concat(
         (_aggregation(
-            data.sample(frac=1, replace=True, axis=1), axis=1)
-         for _ in range(num_bootstrapped_datasets)),
+            data[sampled_index_set], axis=1)
+         for sampled_index_set in sampled_index_sets),
         axis='columns')
     mean_statistic = aggregated_samples.agg('mean', axis='columns')
     std_statistic = aggregated_samples.agg('std', axis='columns')
-    return mean_statistic, std_statistic
+    return mean_statistic, std_statistic, sampled_index_sets
 
 
 def plot_best_run_envelopes(root_directory,
@@ -230,7 +263,9 @@ def plot_best_run_envelopes(root_directory,
                             index='wall_time',
                             included_algorithms=(),
                             remove_divergences=False,
-                            break_x_axis=False):
+                            break_x_axis=False,
+                            return_data=False):
+    plotted_data = {}
     fig, axes = plt.subplots(1, 2 if break_x_axis else 1,
                              sharey=True,
                              width_ratios=(9, 1) if break_x_axis else None)
@@ -251,9 +286,29 @@ def plot_best_run_envelopes(root_directory,
         if remove_divergences:
             undiverged_runs = pivoted_data.iloc[-1] < pivoted_data.iloc[0]
             pivoted_data = pivoted_data.loc[:, undiverged_runs]
-        mean_evolution, std_evolution = bootstrap_aggregate(pivoted_data,
-                                                            aggregation,
-                                                            num_bootstrapped_datasets)
+        mean_evolution, std_evolution, sampled_index_sets = bootstrap_aggregate(
+            pivoted_data, aggregation, num_bootstrapped_datasets)
+        if return_data:
+            def _aggregation(x, **kwargs):
+                return getattr(x, aggregation)(**kwargs)
+
+            grouped_data = filtered_data.groupby('dir_name')
+            total_steps = grouped_data['step'].max()
+            sampled_steps = np.stack(
+                [_aggregation(
+                    total_steps[sampled_index_set])
+                 for sampled_index_set in sampled_index_sets])
+            total_times = grouped_data['wall_time'].max() - grouped_data['wall_time'].min()
+            sampled_times = np.stack(
+                [_aggregation(
+                    total_times[sampled_index_set])
+                 for sampled_index_set in sampled_index_sets])
+            plotted_data[label] = dict(mean=mean_evolution,
+                                       std=std_evolution,
+                                       steps_mean=sampled_steps.mean(),
+                                       steps_std=sampled_steps.std(),
+                                       times_mean=sampled_times.mean(),
+                                       times_std=sampled_times.std())
         for ax in axes:
             mean_evolution.plot(label=KEY_TO_LABEL[label],
                                 **KEY_TO_STYLE[label],
@@ -337,7 +392,11 @@ def plot_best_run_envelopes(root_directory,
     plt.yscale('log')
     axes[0].legend(handles=legend_handles)
     plt.show()
-    return axes
+
+    if return_data:
+        return axes, plotted_data
+    else:
+        return axes
 
 
 def plot_rosenbrock_paths(root_directory, included_algorithms=()):
@@ -414,7 +473,7 @@ def plot_ablation_trends(root_directory,
         data = util.pandas_from_tensorboard(algorithm_directory)
         filtered_data = data[data['tag'] == metric]
         pivoted_data = get_pivoted_metric_evolution(filtered_data, num_sig_figs)
-        mean_evolution, std_evolution = bootstrap_aggregate(pivoted_data,
+        mean_evolution, std_evolution, _ = bootstrap_aggregate(pivoted_data,
                                                             aggregation,
                                                             num_bootstrapped_datasets)
         split_label = label.split('_')
@@ -438,8 +497,12 @@ def plot_ablation_trends(root_directory,
                 colour = LINEAR_CMAP((np.log10(label_value) + 4) / 5)
             case 'SteppingFactor':
                 label_mantissa = np.log2(label_value)
-                label_text = f'$\\omega_\\mathrm{{inc}} = \\frac{{1}}{{\\omega_\\mathrm{{dec}}}} = 2^{{{label_mantissa.round(decimals=1)}}}$'
+                label_text = f'$\\omega_{{+}} = \\frac{{1}}{{\\omega_{{-}}}} = 2^{{{label_mantissa.round(decimals=1)}}}$'
                 colour = LINEAR_CMAP(np.log2(label_value) / 2)
+            case 'LearningRate':
+                label_mantissa = np.log10(label_value)
+                label_text = f'$\\alpha = 10^{{{label_mantissa.round(decimals=2)}}}$'
+                colour = LINEAR_CMAP((np.log10(label_value) + 6) / 6)
             case _:
                 raise ValueError(f'Unknown prefix {ablation_variable}')
         for ax in axes:

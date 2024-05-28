@@ -130,6 +130,24 @@ def round_sig_figs(data, num_sig_figs):
             if x != 0 else x))
 
 
+def format_value_and_error(value, error, error_sig_figs=2):
+    """Round `error` to `error_sig_figs`, then round `value` to a precision which matches."""
+    if error == 0:
+        return str(value), "0"
+    error_decimal_places = int(error_sig_figs - np.floor(np.log10(np.abs(error))) - 1)
+    rounded_error = round(error, error_decimal_places)
+    rounded_value = round(value, error_decimal_places)
+
+    if error_decimal_places <= 0:
+        rounded_value = int(rounded_value)
+        rounded_error = int(rounded_error)
+        return f'{rounded_value:d}', f'{rounded_error:d}'
+    else:
+        value_format = f'{{:.{error_decimal_places}f}}'
+        error_format = f'{{:.{error_decimal_places}f}}'
+        return value_format.format(rounded_value), error_format.format(rounded_error)
+
+
 def maybe_print(*args, **kwargs):
     if not in_any_ray_session():
         print(*args, **kwargs)

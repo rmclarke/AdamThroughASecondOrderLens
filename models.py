@@ -57,6 +57,14 @@ def mse_loss(predictions, targets, kfac_mask):
         optax.l2_loss(predictions, targets))
 
 
+def rosenbrock_mse_loss(model_output, *args, **kwargs):
+    del args, kwargs
+    targets = jnp.zeros_like(model_output)
+    kfac_jax.register_squared_error_loss(model_output, targets, weight=0.5)
+    return jnp.nanmean(
+        optax.l2_loss(model_output, targets))
+
+
 def null_loss(model_output, *args, **kwargs):
     """Identity loss function, returning the model output directly."""
     del args, kwargs
@@ -131,6 +139,16 @@ class RosenbrockModel(hk.Module):
                                 shape=(2,),
                                 init=self.initial_position)
         return util.rosenbrock(x, y, self.a, self.b)
+
+
+class RosenbrockAsLeastSquares(RosenbrockModel):
+
+    def __call__(self, _):
+        x, y = hk.get_parameter("position",
+                                shape=(2,),
+                                init=self.initial_position)
+        return jnp.array([self.a - x,
+                          jnp.sqrt(self.b) * (y - x**2)])
 
 
 class StackedLSTM(hk.Module):

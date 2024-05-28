@@ -710,3 +710,54 @@ class CholeskyOverriddenWeightedMovingAverage(OverriddenWeightedMovingAverage):
         return jax.tree_util.tree_map(
             lambda _: uncholesky(self.learned_correction) / self.weight,
             self.raw_value)
+
+
+class BaydinSGD():
+
+    def __init__(self,
+                 value_and_grad_fn,
+                 model_fn,
+                 loss_name,
+                 initial_learning_rate,
+                 hypergradient_learning_rate):
+        del model_fn, loss_name
+        self.value_and_grad_fn = value_and_grad_fn
+        self.initial_learning_rate = initial_learning_rate
+        self.hypergradient_learning_rate = hypergradient_learning_rate
+
+    def init(self, model_params, *args, **kwargs):
+        del args, kwargs
+        return dict(learning_rate=jnp.array(self.initial_learning_rate, dtype=jnp.float32),
+                    last_gradient=jnp.zeros_like(jax.flatten_util.ravel_pytree(model_params)[0]))
+
+    @partial(jax.jit, static_argnums=(0,))
+    @util.except_ray_jit_only_once
+    def step(self,
+             params,
+             optimiser_state,
+             batch,
+             func_state,
+             rng,
+             global_step_int,
+             *args,
+             **kwargs):
+        del args, kwargs, global_step_int
+
+        ((loss, (new_func_state, statistics)),
+         gradient) = self.value_and_grad_fn(params, func_state, rng, batch)
+        ravelled_gradient = jax.flatten_util.ravel_pytree(gradient)[0]
+
+        gradient_product = jnp.dot(ravelled_gradient, -optimiser_state['last_gradient'])
+        learning_rate = optimiser_state['learning_rate'] - self.hypergradient_learning_rate * gradient_product
+
+        new_params = jax.tree_util.tree_map(
+            lambda p, grad: p - learning_rate * grad,
+            params,
+            gradient)
+
+        new_optimiser_state=dict(learning_rate=learning_rate,
+                                 last_gradient=ravelled_gradient)
+        statistics.update(dict(loss=loss,
+                               learning_rate=learning_rate))
+
+        return new_params, new_optimiser_state, new_func_state, statistics

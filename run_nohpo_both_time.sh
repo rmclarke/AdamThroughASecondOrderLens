@@ -5,7 +5,7 @@ datasets=(
     'uci_protein'
     'fashion_mnist'
     'svhn'
-    'cifar-10'
+    # 'cifar-10'
     # 'penn_treebank_gpt2_reset'
 )
 
@@ -15,7 +15,8 @@ do
     echo "================================================================================"
     echo "================================================================================"
     echo "Starting ${dataset}, ${optimiser}..."
-    XLA_PYTHON_CLIENT_PREALLOCATE=false python hyperparameter_optimisation.py --SKIP_HPO -c "configs/${dataset}.yaml" "configs/AdamQLR_NoHPO_NoLRClipping.yaml" --log_root "/scratch/dir/ImprovingKFAC/runs/" -g "${dataset}_AdamQLR_NoHPO_NoLRClipping"
+    XLA_PYTHON_CLIENT_PREALLOCATE=false python hyperparameter_optimisation.py --SKIP_HPO -c "configs/${dataset}.yaml" "configs/AdamQLR_NoHPO.yaml" --log_root "/scratch/dir/ImprovingKFAC/runs/" -g "${dataset}_AdamQLR_NoHPO"
+    XLA_PYTHON_CLIENT_PREALLOCATE=false python hyperparameter_optimisation.py --SKIP_HPO -c "configs/${dataset}.yaml" "configs/KFAC.yaml" --log_root "/scratch/dir/ImprovingKFAC/runs/" -g "${dataset}_KFAC_BigBatch_NoHPO_Time" --num_epochs=-1 --batch_size=3200
     echo "Finished ${dataset}, ${optimiser}."
 done
 echo "================================================================================"

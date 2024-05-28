@@ -5,6 +5,8 @@ optimisers=(
     'SGDmwd'
     'Adam'
     'AdamQLR_Damped_Hessian'
+    'AdamQLR_Damped_Hessian_NoLRClipping'
+    'KFAC'
 )
 
 datasets=(

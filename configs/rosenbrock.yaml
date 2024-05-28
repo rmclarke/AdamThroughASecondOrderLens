@@ -1,10 +1,10 @@
 model:
-  name: RosenbrockModel
+  name: RosenbrockAsLeastSquares
   a: 1
   b: 100
   # initial_position: [1, -1]
 loss:
-  name: null_loss
+  name: rosenbrock_mse_loss
 dataset:
   name: NullDataset
 
